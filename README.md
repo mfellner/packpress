@@ -1,4 +1,4 @@
-# packpress
+# packpress [![Build Status](https://travis-ci.org/mfellner/packpress.svg?branch=master)](https://travis-ci.org/mfellner/packpress)
 
 Yet another highly opinionated static site generator based on webpack and React.
 
