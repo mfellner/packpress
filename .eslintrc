@@ -4,6 +4,8 @@
     "strict": 0
   },
   "ecmaFeatures": {
+    "es6": true,
+    "modules": true,
     "jsx": true
   },
   "plugins": [

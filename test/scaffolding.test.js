@@ -40,7 +40,8 @@ describe('scaffolding', () => {
     it('should overwrite an existing directory if the option is given', done => {
       mkdirp(proDir).then(() => {
         const options = {overwrite: true}
-        scaffolding.createNewProject(proDir, options).should.fulfilledWith(proDir).
+        scaffolding.createNewProject(proDir, options).should.finally.be.a.Array().
+        and.not.empty().
         then(done.bind(this, null)).catch(done)
       }).
       catch(done)
