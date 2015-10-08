@@ -1,6 +1,6 @@
 import React from 'react'
 import content from './content.jsx'
-import loadJSON from '../util'
+import loadJSON from '../js/util'
 
 const Content = React.createFactory(content)
 
