@@ -7,11 +7,11 @@
     "packpress": "bin/packpress.js"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "scripts": {
+    "start": "bin/packpress",
     "test": "mocha --compilers js:babel/register",
-    "postinstall": "babel lib -d dist",
     "build": "babel lib -d dist"
   },
   "repository": {
@@ -30,25 +30,26 @@
   },
   "homepage": "https://github.com/mfellner/packpress#readme",
   "devDependencies": {
-    "babel-eslint": "4.x",
-    "eslint": "1.x",
-    "eslint-plugin-react": "3.x",
-    "mocha": "2.x",
-    "should": "7.x",
-    "should-promised": "0.3.x"
+    "babel-cli": "6.14.0",
+    "babel-core": "6.14.0",
+    "babel-loader": "6.2.5",
+    "babel-plugin-syntax-async-functions": "6.13.0",
+    "babel-plugin-syntax-flow": "6.13.0",
+    "babel-plugin-transform-async-to-generator": "6.8.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.14.0",
+    "babel-plugin-transform-flow-strip-types": "6.14.0",
+    "babel-preset-react": "6.11.1",
+    "babel-runtime": "6.11.6",
+    "chai": "3.5.0",
+    "mocha": "3.0.2"
   },
   "dependencies": {
-    "babel": "5.8.x",
-    "babel-core": "5.8.x",
-    "babel-loader": "5.3.x",
-    "babel-runtime": "^5.8.x",
-    "glob": "5.0.x",
-    "mkdirp": "0.5.x",
-    "mz": "2.0.x",
-    "react": "0.13.x",
-    "rimraf": "2.4.x",
-    "static-jsx-webpack-plugin": "0.1.0-alpha.3",
-    "thenify": "3.1.x",
-    "webpack": "1.12.x"
+    "glob": "7.0.6",
+    "mkdirp": "0.5.1",
+    "mz": "2.4.0",
+    "react": "15.3.1",
+    "rimraf": "2.5.4",
+    "thenify": "3.2.0",
+    "webpack": "1.13.2"
   }
 }

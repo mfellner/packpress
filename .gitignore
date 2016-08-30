@@ -58,6 +58,6 @@ build/Release
 node_modules
 
 ### Project ###
-dist/
-myproject/
-_tmp/
+/dist
+/myproject
+/_tmp

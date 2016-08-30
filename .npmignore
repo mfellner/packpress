@@ -1,4 +1,6 @@
-dist/
-test/
+/lib
+/test
+.babelrc
 .nvmrc
-.eslintrc
+.travisrc
+circle.yml
