@@ -1,21 +1,23 @@
-import should from 'should'
-import shouldPromised from 'should-promised'
 import path from 'path'
-
+import expect from './expect'
 import * as template from '../lib/template'
 
 describe('template', () => {
   describe('#getTemplateFiles()', () => {
-    it('should return a list of sources and destinations', done => {
+    it('should return a list of sources and destinations', async () => {
       const targetDir = path.join(__dirname, 'test')
-      template.getTemplateFiles(targetDir).should.finally.be.a.Array().
-      and.not.empty().
-      and.matchEach(function(obj) {
-        obj.src.should.match(/^\S+\w+\.(js|jsx|json)$/)
-        obj.dst.should.startWith(targetDir).
-        and.endWith(path.basename(obj.src))
-      }).
-      then(done.bind(this, null)).catch(done)
+      const templateFiles = await template.getTemplateFiles(targetDir)
+
+      expect(templateFiles).to.not.be.empty
+
+      for (let file of templateFiles) {
+        expect(file).to.have.property('src')
+          .that.matches(/^[\w\/\\]+\.(js|jsx|json)$/).and
+          .that.not.startsWith(targetDir)
+        expect(file).to.have.property('dst')
+          .that.startsWith(targetDir).and
+          .that.endsWith(path.basename(file.src))
+      }
     })
   })
 })
