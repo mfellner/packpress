@@ -61,3 +61,4 @@ node_modules
 /dist
 /myproject
 /_tmp
+.nyc_output/

@@ -8,5 +8,10 @@
     "transform-async-to-generator",
     "transform-es2015-modules-commonjs",
     "transform-flow-strip-types"
-  ]
+  ],
+  "env": {
+    "test": {
+      "plugins": ["istanbul"]
+    }
+  }
 }

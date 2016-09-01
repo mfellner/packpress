@@ -1,5 +1,7 @@
 /lib
 /test
+/coverage
+.nyc_output/
 .babelrc
 .nvmrc
 .travisrc

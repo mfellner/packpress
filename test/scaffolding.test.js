@@ -25,6 +25,12 @@ describe('scaffolding', () => {
       })
     })
 
+    it('should create a new directory', async () => {
+      await expect(scaffolding.createNewProject(proDir)).to.eventually
+        .be.instanceOf(Array).and
+        .not.be.empty
+    })
+
     it('should not overwrite an existing directory', async () => {
       await mkdirp(proDir)
       await expect(scaffolding.createNewProject(proDir)).to.be.rejectedWith(/already exists/)
