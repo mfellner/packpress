@@ -1,7 +1,6 @@
 import thenify from 'thenify'
 import rimraf from 'rimraf'
 import path from 'path'
-import expect from './expect'
 import * as scaffolding from '../lib/scaffolding'
 
 const mkdirp = thenify(require('mkdirp'))
@@ -13,35 +12,45 @@ describe('scaffolding', () => {
   afterEach(done => rimraf(tmpDir, done))
 
   describe('#createNewProject()', () => {
-    it('should not accept an empty path', () => {
-      return expect(scaffolding.createNewProject()).to.be.rejectedWith(/Path must be a string/)
+    it('should not accept an empty path', async () => {
+      try {
+        await scaffolding.createNewProject()
+      } catch(e) {
+        expect(e.message).toMatch(/Path must be a string/)
+      }
     })
 
     const paths = ['', '../', '/']
 
     paths.forEach(p => {
-      it(`should require '${p}' to be a subdirectory`, () => {
-        return expect(scaffolding.createNewProject(p)).to.be.rejectedWith(/must be a subdirectory/)
+      it(`should require '${p}' to be a subdirectory`, async () => {
+        try {
+          await scaffolding.createNewProject(p)
+        } catch(e) {
+          expect(e.message).toMatch(/must be a subdirectory/)
+        }
       })
     })
 
     it('should create a new directory', async () => {
-      await expect(scaffolding.createNewProject(proDir)).to.eventually
-        .be.instanceOf(Array).and
-        .not.be.empty
+      const result = await scaffolding.createNewProject(proDir)
+      expect(result.length).toBeGreaterThan(0)
     })
 
     it('should not overwrite an existing directory', async () => {
       await mkdirp(proDir)
-      await expect(scaffolding.createNewProject(proDir)).to.be.rejectedWith(/already exists/)
+      try {
+        await scaffolding.createNewProject(proDir)
+      } catch(e) {
+        expect(e.message).toMatch(/already exists/)
+      }
     })
 
     it('should overwrite an existing directory if the option is given', async () => {
       await mkdirp(proDir)
       const options = {overwrite: true}
-      await expect(scaffolding.createNewProject(proDir, options)).to.eventually
-        .be.instanceOf(Array).and
-        .not.be.empty
+      const result = await scaffolding.createNewProject(proDir, options)
+      expect(result.length).toBeGreaterThan(0)
     })
   })
 })

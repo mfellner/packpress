@@ -1,5 +1,4 @@
 import path from 'path'
-import expect from './expect'
 import * as template from '../lib/template'
 
 describe('template', () => {
@@ -8,15 +7,15 @@ describe('template', () => {
       const targetDir = path.join(__dirname, 'test')
       const templateFiles = await template.getTemplateFiles(targetDir)
 
-      expect(templateFiles).to.not.be.empty
+      expect(templateFiles.length).toBeGreaterThan(0)
 
       for (let file of templateFiles) {
-        expect(file).to.have.property('src')
-          .that.matches(/^[\w\/\\]+\.(js|jsx|json)$/).and
-          .that.not.startsWith(targetDir)
-        expect(file).to.have.property('dst')
-          .that.startsWith(targetDir).and
-          .that.endsWith(path.basename(file.src))
+        expect(file.src).toBeDefined()
+        expect(file.src).toMatch(/^[\w\/\\]+\.(js|jsx|json)$/)
+        expect(file.src).not.toMatch(new RegExp(`^${targetDir}`))
+        expect(file.dst).toBeDefined()
+        expect(file.dst).toMatch(new RegExp(`^${targetDir}`))
+        expect(file.dst).toMatch(new RegExp(`${path.basename(file.src)}$`))
       }
     })
   })
