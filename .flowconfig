@@ -6,3 +6,14 @@
 flow-typed/
 
 [options]
+esproposal.class_static_fields=enable
+esproposal.class_instance_fields=enable
+
+experimental.strict_type_args=true
+
+suppress_type=$FlowIssue
+
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-7]\\|1[0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+
+[version]
+^0.31.0
