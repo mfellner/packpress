@@ -3,13 +3,19 @@ import Root from './components/Root'
 
 export default class Index extends Component {
   props: {
-    title: string
+    language: string,
+    title: string,
+    description: string
   }
 
   render() {
-    return <html>
+    return <html lang={this.props.language}>
       <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="x-ua-compatible" content="ie=edge"/>
         <title>{this.props.title}</title>
+        <meta name="description" content={this.props.description}/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
       </head>
       <body>
         <main id="main">
