@@ -34,7 +34,8 @@ describe('scaffolding', () => {
 
     it('should create a new directory', async () => {
       const result = await scaffolding.createNewProject(proDir)
-      expect(result.length).toBeGreaterThan(0)
+      expect(result.filter(f => /packpress.json$/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /index.js/.test(f))[0]).toBeDefined()
     })
 
     it('should not overwrite an existing directory', async () => {
@@ -50,7 +51,8 @@ describe('scaffolding', () => {
       await mkdirp(proDir)
       const options = {overwrite: true}
       const result = await scaffolding.createNewProject(proDir, options)
-      expect(result.length).toBeGreaterThan(0)
+      expect(result.filter(f => /packpress.json$/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /index.js/.test(f))[0]).toBeDefined()
     })
   })
 })

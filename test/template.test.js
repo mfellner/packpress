@@ -11,7 +11,7 @@ describe('template', () => {
 
       for (let file of templateFiles) {
         expect(file.src).toBeDefined()
-        expect(file.src).toMatch(/^[\w\/\\]+\.(js|jsx|json)$/)
+        expect(file.src).toMatch(/^[\w\/\\]+\.(js|json)$/)
         expect(file.src).not.toMatch(new RegExp(`^${targetDir}`))
         expect(file.dst).toBeDefined()
         expect(file.dst).toMatch(new RegExp(`^${targetDir}`))
