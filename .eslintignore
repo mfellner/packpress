@@ -1,1 +1,7 @@
 **/*{.,-}min.js
+/coverage
+/dist
+/bin
+/flow-typed
+/myproject
+/test/fixtures
