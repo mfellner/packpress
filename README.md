@@ -1,4 +1,4 @@
-# packpress [![Build Status](https://travis-ci.org/mfellner/packpress.svg?branch=master)](https://travis-ci.org/mfellner/packpress) [![Coverage Status](https://coveralls.io/repos/github/mfellner/packpress/badge.svg?branch=master)](https://coveralls.io/github/mfellner/packpress?branch=master)
+# packpress [![Build Status](https://travis-ci.org/mfellner/packpress.svg?branch=master)](https://travis-ci.org/mfellner/packpress) [![Coverage Status](https://coveralls.io/repos/github/mfellner/packpress/badge.svg?branch=master)](https://coveralls.io/github/mfellner/packpress?branch=master) [![Code Climate](https://codeclimate.com/github/mfellner/packpress/badges/gpa.svg)](https://codeclimate.com/github/mfellner/packpress)
 
 Yet another highly opinionated static site generator based on webpack and React.
 
