@@ -11,9 +11,10 @@
   },
   "scripts": {
     "start": "babel-node lib/cli.js",
+    "build": "babel lib -d dist",
     "test": "NODE_ENV=test jest --coverage",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "build": "babel lib -d dist"
+    "codeclimate": "codeclimate-test-reporter < ./coverage/lcov.info"
   },
   "repository": {
     "type": "git",
@@ -36,8 +37,7 @@
     "babel-jest": "15.0.0",
     "babel-register": "6.14.0",
     "babel-runtime": "6.11.6",
-    "coveralls": "2.11.12",
-    "jest": "^15.1.1"
+    "jest": "15.1.1"
   },
   "dependencies": {
     "babel-loader": "6.2.5",
