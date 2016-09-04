@@ -1,6 +1,6 @@
 import path from 'path'
 import rimraf from 'rimraf'
-import { fileExists } from '../lib/utils'
+import { fileExists } from '../lib/file-utils'
 import { expectAsync } from './helpers'
 import * as scaffolding from '../lib/scaffolding'
 import * as building from '../lib/building'

@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'mz/fs'
 import rimraf from 'rimraf'
-import * as utils from '../lib/utils'
+import { fileExists } from '../lib/file-utils'
 import * as blogging from '../lib/blogging'
 import * as helpers from './helpers'
 
@@ -25,7 +25,7 @@ describe('blogging', () => {
       console.log(filePath)
       const postsDir = path.join(proDir, 'posts')
 
-      const result = await utils.fileExists(postsDir)
+      const result = await fileExists(postsDir)
       expect(result).toBe(true)
 
       const files = await fs.readdir(postsDir)
