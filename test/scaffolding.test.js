@@ -35,7 +35,10 @@ describe('scaffolding', () => {
     it('should create a new directory', async () => {
       const result = await scaffolding.createNewProject(proDir)
       expect(result.filter(f => /packpress.json$/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /index.js/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /Blog.js/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /BlogPost.js/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /Footer.js/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /Header.js/.test(f))[0]).toBeDefined()
     })
 
     it('should not overwrite an existing directory', async () => {
@@ -52,7 +55,10 @@ describe('scaffolding', () => {
       const options = {overwrite: true}
       const result = await scaffolding.createNewProject(proDir, options)
       expect(result.filter(f => /packpress.json$/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /index.js/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /Blog.js/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /BlogPost.js/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /Footer.js/.test(f))[0]).toBeDefined()
+      expect(result.filter(f => /Header.js/.test(f))[0]).toBeDefined()
     })
   })
 })

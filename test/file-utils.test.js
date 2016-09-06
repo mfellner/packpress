@@ -41,6 +41,14 @@ describe('file-utils', () => {
     })
   })
 
+  describe('#readJSON()', () => {
+    it('should read a JSON file', async () => {
+      const object = await futils.readJSON(path.resolve(__dirname, '../package.json'))
+      expect(object.name).toBeDefined()
+      expect(object.version).toBeDefined()
+    })
+  })
+
   describe('#writeFile()', () => {
     it('should write a file', async () => {
       const file = await futils.writeFile(tmpFile, '\n')
