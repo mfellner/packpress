@@ -1,7 +1,5 @@
 import path from 'path'
 import Loader from '../lib/Loader'
-import * as utils from '../lib/utils'
-import * as config from '../lib/config'
 
 describe('loader', () => {
   const testFile = path.resolve(__dirname, 'fixtures', 'hello-module.js')
