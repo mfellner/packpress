@@ -1,15 +1,11 @@
-import path from 'path'
-import fs from 'mz/fs'
-import rimraf from 'rimraf'
-import { fileExists } from '../lib/file-utils'
-import * as blogging from '../lib/blogging'
-import * as helpers from './helpers'
+import { expectAsyncToThrow } from './helpers'
 
 describe('blogging', () => {
-  const tmpDir = path.join(process.cwd(), './_tmp')
-  const proDir = path.join(tmpDir, 'myproject')
+  jest.mock('../lib/utils')
+  jest.mock('../lib/file-utils')
+  jest.mock('../lib/template')
 
-  afterEach(done => rimraf(tmpDir, done))
+  const blogging = require('../lib/blogging')
 
   describe('#getPostFileName()', () => {
     it('should return the correct file name', () => {
@@ -20,30 +16,31 @@ describe('blogging', () => {
 
   describe('#createPost()', () => {
     it('should create a markdown file in the posts subdirectory', async () => {
-      await helpers.createMockProject(proDir)
-      const filePath = await blogging.createPost('Hello, World!', {path: tmpDir})
-      const postsDir = path.join(proDir, 'posts')
+      require('../lib/utils').__setMockReturnValues({
+        isProjectDir: true,
+        findProjectDir: ['hello']
+      })
+      const futils = require('../lib/file-utils')
 
-      const result = await fileExists(postsDir)
-      expect(result).toBe(true)
-
-      const files = await fs.readdir(postsDir)
-      expect(files.length).toBe(1)
-      expect(files[0]).toMatch(/^\d{4}-\d{2}-\d{2}-hello-world\.md$/)
+      const filePath = await blogging.createPost('Hello, World!')
+      expect(filePath).toMatch(/\/hello\/posts\/\d{4}-\d{2}-\d{2}-hello-world\.md$/)
+      expect(futils.writeFile).toBeCalledWith(filePath, '\n')
     })
 
     it('should overwrite an existing file only if the option is set', async () => {
-      await helpers.createMockProject(proDir)
-      await blogging.createPost('Hello, World!', {path: tmpDir})
+      require('../lib/utils').__setMockReturnValues({
+        isProjectDir: true,
+        findProjectDir: ['hello']
+      })
+      const futils = require('../lib/file-utils').__setMockReturnValues({
+        fileExists: file => /\/hello\/posts\/\d{4}-\d{2}-\d{2}-hello-world\.md$/.test(file)
+      })
 
-      const expected = await helpers.expectAsync(blogging.createPost('Hello, World!', {path: tmpDir}))
-      expected.toThrow(/already exists/)
+      await expectAsyncToThrow(blogging.createPost('Hello, World!'))(/already exists/)
 
-      const filePath = await blogging.createPost('Hello, World!', {path: tmpDir, overwrite: true})
-      const postsDir = path.join(proDir, 'posts')
-
-      const result = await fileExists(postsDir)
-      expect(result).toBe(true)
+      const filePath = await blogging.createPost('Hello, World!', {overwrite: true})
+      expect(futils.rmFile).toBeCalledWith(filePath)
+      expect(futils.writeFile).toBeCalledWith(filePath, '\n')
     })
   })
 })

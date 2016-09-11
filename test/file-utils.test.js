@@ -1,86 +1,78 @@
 import path from 'path'
-import rimraf from 'rimraf'
-import * as futils from '../lib/file-utils'
-import * as helpers from './helpers'
+import { expectAsyncToThrow } from './helpers'
 
 describe('file-utils', () => {
-  const tmpDir = path.join(process.cwd(), './_tmp')
-  const tmpFile = path.join(tmpDir, 'test.js')
+  jest.mock('mz/fs')
+  jest.mock('mkdirp')
+  jest.mock('rimraf')
+  jest.mock('thenify')
+  require('thenify').mockImplementation(arg => arg)
 
-  afterEach(done => rimraf(tmpDir, done))
+  const fs = require('mz/fs')
+  const mkdirp = require('mkdirp')
+  const rimraf = require('rimraf')
+  const futils = require('../lib/file-utils')
 
   describe('#fileExists()', () => {
     it('should return true if a file exists', async () => {
-      const test = await futils.fileExists(__filename)
-      expect(test).toBe(true)
-    })
+      fs.stat = jest.fn(file => Promise.resolve(file === 'hello.js'))
 
-    it('should return true if a directory exists', async () => {
-      const test = await futils.fileExists(__dirname)
+      const test = await futils.fileExists('hello.js')
       expect(test).toBe(true)
     })
 
     it('should return false if a file does not exist', async () => {
-      const test = await futils.fileExists('./doesnotexist.js')
-      expect(test).toBe(false)
-    })
+      const e = new Error()
+      e.code = 'ENOENT'
+      fs.stat = jest.fn(() => { throw e })
 
-    it('should return false if a directory does not exist', async () => {
-      const test = await futils.fileExists('./doesnotexist/')
+      const test = await futils.fileExists('hello.js')
       expect(test).toBe(false)
     })
 
     it('should throw if the input is invalid', async () => {
-      let test
-      try {
-        test = await futils.fileExists(null)
-      } catch (e) {
-        expect(e.message).toBeTruthy()
-      }
-      expect(test).toBeUndefined()
+      fs.stat = jest.fn(file => { if (file === null) throw new Error('Nooo!')})
+
+      await expectAsyncToThrow(futils.fileExists(null))(/Nooo!/)
     })
   })
 
   describe('#readJSON()', () => {
     it('should read a JSON file', async () => {
-      const object = await futils.readJSON(path.resolve(__dirname, '../package.json'))
-      expect(object.name).toBeDefined()
-      expect(object.version).toBeDefined()
+      fs.readFile = jest.fn(() => Promise.resolve(`{"hello": "world"}`))
+
+      const object = await futils.readJSON('hello.json')
+      expect(object.hello).toBe('world')
     })
   })
 
   describe('#writeFile()', () => {
     it('should write a file', async () => {
-      const file = await futils.writeFile(tmpFile, '\n')
-      const test = await futils.fileExists(file)
-      expect(test).toBe(true)
-      expect(file).toBe(tmpFile)
+      fs.writeFile = jest.fn(file => file)
+
+      const file = await futils.writeFile('/hello/world.js', 'yay!')
+      expect(file).toBe('/hello/world.js')
+      expect(mkdirp).toBeCalledWith('/hello')
+      expect(fs.writeFile).toBeCalledWith('/hello/world.js', 'yay!')
     })
   })
 
   describe('#copyFile()', () => {
     it('should copy a file', async () => {
-      const original = await futils.writeFile(tmpFile, '\n')
-      const copy = await futils.copyFile(original, `${original}.copy`)
-      const test = await futils.fileExists(copy)
-      expect(test).toBe(true)
-      expect(copy).toBe(`${original}.copy`)
+      fs.createReadStream = jest.fn(() => ({pipe: (arg) => ({path: arg})}))
+      fs.createWriteStream = jest.fn(arg => arg)
+
+      const copy = await futils.copyFile('hello.js', 'hello.copy')
+      expect(copy).toBe('hello.copy')
+      expect(fs.createReadStream).toBeCalledWith('hello.js')
+      expect(fs.createWriteStream).toBeCalledWith('hello.copy')
     })
   })
 
   describe('#rmFile()', () => {
     it('should delete a file', async () => {
-      const file = await futils.writeFile(tmpFile, '\n')
-      await futils.rmFile(file)
-      const test = await futils.fileExists(file)
-      expect(test).toBe(false)
-    })
-
-    it('should delete a directory', async () => {
-      const file = await futils.writeFile(tmpFile, '\n')
-      await futils.rmFile(tmpDir)
-      const test = await futils.fileExists(tmpDir)
-      expect(test).toBe(false)
+      await futils.rmFile('hello.js')
+      expect(rimraf).toBeCalledWith('hello.js')
     })
   })
 })

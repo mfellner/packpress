@@ -1,34 +1,45 @@
-import path from 'path'
-import rimraf from 'rimraf'
-import { fileExists } from '../lib/file-utils'
-import { expectAsync } from './helpers'
-import * as scaffolding from '../lib/scaffolding'
-import * as building from '../lib/building'
+import HelloComponent from './fixtures/hello-component.js'
+import { expectAsyncToThrow } from './helpers'
 
 describe('building', () => {
-  const testFile = path.resolve(__dirname, 'fixtures', 'hello-component.js')
-  const tmpDir = path.join(process.cwd(), './_tmp')
-  const proDir = path.join(tmpDir, 'myproject')
+  jest.mock('../lib/utils')
+  jest.mock('../lib/file-utils')
+  jest.mock('../lib/Loader')
 
-  afterEach(done => rimraf(tmpDir, done))
+  const building = require('../lib/building')
+  const HelloHTML = '<html><head><title>hello</title></head><body></body></html>'
 
   describe('#renderHTML()', () => {
     it('should render HTML', async () => {
-      const result = await building.renderHTML(testFile, {title: 'hello'})
-      expect(result).toBe('<html><head><title>hello</title></head><body></body></html>')
+      const loader = require('../lib/Loader').__setMockReturnValues({
+        loadModuleFromFile: HelloComponent
+      })
+
+      const result = await building.renderHTML('hello.js', {title: 'hello'})
+      expect(result).toBe(HelloHTML)
+      expect(loader.__instance.loadModuleFromFile).toBeCalledWith('hello.js')
     })
   })
 
   describe('#buildProject()', () => {
     it('throw if there is no project', async () => {
-      (await expectAsync(building.buildProject(proDir))).toThrow(/No project found/)
+      await expectAsyncToThrow(building.buildProject('/hello'))(/No project found/)
     })
 
     it('write the index.html file', async () => {
-      await scaffolding.createNewProject(proDir)
-      await building.buildProject(proDir)
-      const exists = await fileExists(path.join(proDir, 'dist', 'index.html'))
-      expect(exists).toBe(true)
+      require('../lib/utils').__setMockReturnValues({
+        isProjectDir: true
+      })
+      const futils = require('../lib/file-utils').__setMockReturnValues({
+        readJSON: {
+          template: 'hello.js',
+          title: 'hello'
+        }
+      })
+
+      const result = await building.buildProject('/hello')
+      expect(result).toBe('/hello/dist/index.html')
+      expect(futils.writeFile).toBeCalledWith('/hello/dist/index.html', HelloHTML)
     })
   })
 })

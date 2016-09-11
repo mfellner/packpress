@@ -1,64 +1,52 @@
-import thenify from 'thenify'
-import rimraf from 'rimraf'
-import path from 'path'
-import * as scaffolding from '../lib/scaffolding'
-
-const mkdirp = thenify(require('mkdirp'))
+import { expectAsyncToThrow } from './helpers'
 
 describe('scaffolding', () => {
-  const tmpDir = path.join(process.cwd(), './_tmp')
-  const proDir = path.join(tmpDir, 'myproject')
+  jest.mock('../lib/file-utils')
+  jest.mock('../lib/template')
 
-  afterEach(done => rimraf(tmpDir, done))
+  const targetDir = 'hello'
+  const srcFile = '/template/packpress.json'
+  const dstFile = `/${targetDir}/packpress.json`
+  require('../lib/template').__setMockReturnValues({
+    getTemplateFiles: [{
+      src: srcFile,
+      dst: dstFile
+    }]
+  })
+
+  const futils = require('../lib/file-utils')
+  const scaffolding = require('../lib/scaffolding')
 
   describe('#createNewProject()', () => {
     it('should not accept an empty path', async () => {
-      try {
-        await scaffolding.createNewProject()
-      } catch(e) {
-        expect(e.message).toMatch(/Path must be a string/)
-      }
+      await expectAsyncToThrow(scaffolding.createNewProject())(/Path must be a string/)
     })
 
     const paths = ['', '../', '/']
 
     paths.forEach(p => {
       it(`should require '${p}' to be a subdirectory`, async () => {
-        try {
-          await scaffolding.createNewProject(p)
-        } catch(e) {
-          expect(e.message).toMatch(/must be a subdirectory/)
-        }
+        await expectAsyncToThrow(scaffolding.createNewProject(p))(/must be a subdirectory/)
       })
     })
 
     it('should create a new directory', async () => {
-      const result = await scaffolding.createNewProject(proDir)
-      expect(result.filter(f => /packpress.json$/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /Blog.js/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /BlogPost.js/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /Footer.js/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /Header.js/.test(f))[0]).toBeDefined()
+      const result = await scaffolding.createNewProject(targetDir)
+      expect(result[0]).toBe('/hello/packpress.json')
+      expect(futils.copyFile).toBeCalledWith(srcFile, dstFile)
     })
 
     it('should not overwrite an existing directory', async () => {
-      await mkdirp(proDir)
-      try {
-        await scaffolding.createNewProject(proDir)
-      } catch(e) {
-        expect(e.message).toMatch(/already exists/)
-      }
+      futils.__setMockReturnValues({
+        fileExists: f => f.endsWith(`/${targetDir}`)
+      })
+      await expectAsyncToThrow(scaffolding.createNewProject(targetDir))(/already exists/)
     })
 
     it('should overwrite an existing directory if the option is given', async () => {
-      await mkdirp(proDir)
-      const options = {overwrite: true}
-      const result = await scaffolding.createNewProject(proDir, options)
-      expect(result.filter(f => /packpress.json$/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /Blog.js/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /BlogPost.js/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /Footer.js/.test(f))[0]).toBeDefined()
-      expect(result.filter(f => /Header.js/.test(f))[0]).toBeDefined()
+      const result = await scaffolding.createNewProject(targetDir, {overwrite: true})
+      expect(result[0]).toBe(dstFile)
+      expect(futils.copyFile).toBeCalledWith(srcFile, dstFile)
     })
   })
 })

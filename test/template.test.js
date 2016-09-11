@@ -4,7 +4,7 @@ import * as template from '../lib/template'
 describe('template', () => {
   describe('#getTemplateFiles()', () => {
     it('should return a list of sources and destinations', async () => {
-      const targetDir = path.join(__dirname, 'test')
+      const targetDir = path.resolve(__dirname, '../hello')
       const templateFiles = await template.getTemplateFiles(targetDir)
 
       expect(templateFiles.length).toBeGreaterThan(0)
