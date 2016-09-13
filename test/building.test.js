@@ -51,4 +51,13 @@ describe('building', () => {
       expect(futils.writeFile).toBeCalledWith('/hello/dist/posts/1970-01-01-hello.html', '<div>hello</div>')
     })
   })
+
+  describe('#parseConfig()', () => {
+    it('should throw an error if the configuration is invalid', async () => {
+      futils.__setMockReturnValues({
+        readJSON: {}
+      })
+      await expectAsyncToThrow(building.parseConfig('packpress.json'))(/Invalid config/)
+    })
+  })
 })

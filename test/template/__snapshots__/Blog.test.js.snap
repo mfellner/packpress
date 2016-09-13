@@ -1,0 +1,16 @@
+exports[`Blog should render blog posts 1`] = `
+<div>
+  <div
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<div>World!</div>"
+      }
+    } />
+  <div
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<div>Le monde!</div>"
+      }
+    } />
+</div>
+`;
