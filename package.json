@@ -4,14 +4,15 @@
   "description": "Yet another static site generator",
   "main": "lib/cli.js",
   "bin": {
-    "packpress": "bin/packpress.js"
+    "packpress": "bin/packpress"
   },
   "engines": {
     "node": ">=6"
   },
   "scripts": {
     "start": "babel-node lib/cli.js",
-    "build": "babel lib -d dist",
+    "build": "babel --ignore __mocks__ lib -d dist",
+    "clean": "rm -rf dist",
     "test": "NODE_ENV=test jest --coverage",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "codeclimate": "codeclimate-test-reporter < ./coverage/lcov.info"
@@ -33,7 +34,6 @@
   "homepage": "https://github.com/mfellner/packpress#readme",
   "devDependencies": {
     "babel-cli": "6.14.0",
-    "babel-core": "6.14.0",
     "babel-jest": "15.0.0",
     "babel-register": "6.14.0",
     "babel-runtime": "6.11.6",
@@ -41,6 +41,7 @@
     "react-test-renderer": "15.3.1"
   },
   "dependencies": {
+    "babel-core": "6.14.0",
     "babel-loader": "6.2.5",
     "babel-plugin-syntax-async-functions": "6.13.0",
     "babel-plugin-syntax-flow": "6.13.0",
@@ -51,7 +52,7 @@
     "babel-plugin-transform-object-rest-spread": "6.8.0",
     "babel-preset-react": "6.11.1",
     "glob": "7.0.6",
-    "markdown-it": "7.0.1",
+    "markdown-it": "8.0.0",
     "memory-fs": "0.3.0",
     "mkdirp": "0.5.1",
     "mz": "2.4.0",
