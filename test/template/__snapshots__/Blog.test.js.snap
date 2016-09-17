@@ -1,16 +1,42 @@
 exports[`Blog should render blog posts 1`] = `
 <div>
-  <div
-    dangerouslySetInnerHTML={
-      Object {
-        "__html": "<div>World!</div>"
-      }
-    } />
-  <div
-    dangerouslySetInnerHTML={
-      Object {
-        "__html": "<div>Le monde!</div>"
-      }
-    } />
+  <div>
+    <h1>
+      <a
+        href="posts/hello.html">
+        <span>
+          Hello
+          <small>
+            9/17/2016
+          </small>
+        </span>
+      </a>
+    </h1>
+    <div
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "<div>World!</div>"
+        }
+      } />
+  </div>
+  <div>
+    <h1>
+      <a
+        href="posts/bonjour.html">
+        <span>
+          Bonjour
+          <small>
+            9/17/2016
+          </small>
+        </span>
+      </a>
+    </h1>
+    <div
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "<div>Le monde!</div>"
+        }
+      } />
+  </div>
 </div>
 `;
