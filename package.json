@@ -1,0 +1,53 @@
+{
+  "name": "packpress2",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist/*",
+    "build": "tsc -p .",
+    "dist": "npm run clean && npm run build",
+    "lint": "tslint --type-check --project tsconfig.json",
+    "test": "npm run lint && jest --coverage",
+    "prettier": "prettier --print-width=100 --single-quote --write \"./+(src|test)/**/*.+(js|ts|tsx)\"",
+    "prepublishOnly": "npm run dist"
+  },
+  "dependencies": {
+    "@types/mz": "^0.0.31",
+    "@types/react": "^15.0.38",
+    "@types/react-dom": "^15.5.1",
+    "mz": "^2.6.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "remark": "^7.0.1",
+    "remark-react": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "8.0.14",
+    "jest": "20.0.4",
+    "prettier": "1.5.3",
+    "rimraf": "2.6.1",
+    "ts-jest": "20.0.7",
+    "ts-node": "3.2.0",
+    "tslint": "5.5.0",
+    "typescript": "2.4.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "transform": {
+      "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "/test/.*\\.test.ts$",
+    "mapCoverage": true,
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "html"
+    ]
+  }
+}
