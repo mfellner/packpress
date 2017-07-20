@@ -11,17 +11,48 @@ export type Options = {
 };
 
 export default class WebpackService {
-  private readonly conf: Configuration;
+  private readonly confs: Configuration[];
 
   constructor(options: Options) {
+    const defaultConf: Configuration = {
+      entry: {
+        __client__: path.resolve(__dirname, 'client.ts')
+      },
+      output: {
+        filename: '[name].js',
+        path: options.outputPath
+      },
+      module: {
+        rules: [
+          {
+            test: /\.tsx?$/,
+            loader: 'awesome-typescript-loader',
+            options: {
+              configFileName: path.resolve(__dirname, 'clientconfig.json'),
+              outDir: './dist/',
+              sourceMap: true,
+              strict: true,
+              module: 'commonjs',
+              target: 'es5',
+              jsx: 'react',
+              removeComments: true,
+              lib: ['dom', 'es2015']
+            }
+          },
+          { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
+        ]
+      },
+      devtool: 'source-map'
+    };
+
     const entries = options.entries.reduce(
       (obj, { name, file }) => Object.assign(obj, { [name]: file }),
       {}
     );
-    this.conf = {
+
+    const pageConf: Configuration = {
       entry: entries,
       context: options.context,
-      target: 'web',
       output: {
         filename: '[name].js',
         path: options.outputPath,
@@ -51,12 +82,14 @@ export default class WebpackService {
       externals: ['react', 'react-dom'],
       devtool: 'source-map'
     };
+
+    this.confs = [defaultConf, pageConf];
   }
 
   public run(): Promise<Stats> {
     return new Promise((resolve, reject) => {
-      console.log(this.conf);
-      webpack(this.conf, (err, stats) => {
+      console.log(this.confs);
+      webpack(this.confs, (err, stats) => {
         if (err) return reject(err);
         return resolve(stats);
       });

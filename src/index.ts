@@ -86,31 +86,36 @@ async function main(): Promise<void> {
   });
 
   const stats = await webpackService.run();
-  const entrypoints = stats.toJson().entrypoints as EntrypPoints;
+  const entrypoints: EntrypPoints = stats
+    .toJson()
+    .children.reduce((obj: EntrypPoints, stat: any) => Object.assign(obj, stat.entrypoints), {});
+  console.log(stats.toString());
 
-  entries.map(async entry => {
-    const entrypoint = Object.entries(entrypoints).find(
-      ([name]) => name.indexOf(entry.name) !== -1
-    );
-    if (!entrypoint) return;
-    const { assets } = entrypoint[1];
+  await Promise.all(
+    entries.map(async entry => {
+      const entrypoint = Object.entries(entrypoints).find(
+        ([name]) => name.indexOf(entry.name) !== -1
+      );
+      if (!entrypoint) return;
+      const { assets } = entrypoint[1];
 
-    const element = React.createElement(Document, {
-      scripts: assets.filter(a => path.extname(a) === '.js'),
-      styles: assets.filter(a => path.extname(a) === '.css'),
-      html: entry.html
-    });
-    const html = ReactDOMServer.renderToStaticMarkup(element);
+      const element = React.createElement(Document, {
+        scripts: assets.filter(a => path.extname(a) === '.js'),
+        styles: assets.filter(a => path.extname(a) === '.css'),
+        html: entry.html
+      });
+      const html = ReactDOMServer.renderToStaticMarkup(element);
 
-    const { route } = entry;
-    const i = route.lastIndexOf('/');
-    const dir = route.substring(0, i + 1);
-    const file = (route.substring(i + 1, route.length) || 'index') + '.html';
-    const filePath = path.join(outputPath, dir, file);
+      const { route } = entry;
+      const i = route.lastIndexOf('/');
+      const dir = route.substring(0, i + 1);
+      const file = (route.substring(i + 1, route.length) || 'index') + '.html';
+      const filePath = path.join(outputPath, dir, file);
 
-    console.log('write', filePath);
-    await fs.writeFile(filePath, html);
-  });
+      console.log('write', filePath);
+      await fs.writeFile(filePath, html);
+    })
+  );
 }
 
 main().catch(e => console.error(e));

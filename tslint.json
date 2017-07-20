@@ -12,7 +12,8 @@
     "interface-over-type-literal": false,
     "object-literal-sort-keys": false,
     "arrow-parens": false,
-    "no-reference": false
+    "no-reference": false,
+    "no-var-requires": false
   },
   "rulesDirectory": []
 }

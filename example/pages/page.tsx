@@ -14,6 +14,10 @@ export default class Page extends React.Component<Props, any> {
     return { content };
   }
 
+  public componentDidMount() {
+    console.log('Page did mount.');
+  }
+
   public render() {
     return (
       <div className="page">
