@@ -1,6 +1,6 @@
-export interface ContentProvider {
-  getPaths(route: RegExp): Promise<string[]>;
-  getContent(query: string): Promise<any>;
+export interface ContentProvider<T> {
+  resolveRoutes(route: string | RegExp): Promise<string[]>;
+  getContent(query: string): Promise<T>;
 }
 
 export default ContentProvider;

@@ -1,14 +1,15 @@
 import React = require('react');
-import { Context } from '../../src';
+import { ReactElement } from 'react';
+import Context from '../../src/Context';
 
 export type Props = {
-  content?: React.ReactElement<any>;
+  content?: ReactElement<any>;
 };
 
 export default class Page extends React.Component<Props, any> {
   public static route = /\/[a-z-]+$/;
 
-  public static async getInitialProps(ctx: Context) {
+  public static async getInitialProps(ctx: Context<ReactElement<any>>) {
     const content = await ctx.getState(ctx.pathname);
     return { content };
   }
@@ -20,12 +21,4 @@ export default class Page extends React.Component<Props, any> {
       </div>
     );
   }
-}
-
-export function foo() {
-  return (
-    <div>
-      {React.createElement(Page)}
-    </div>
-  );
 }

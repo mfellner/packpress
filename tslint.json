@@ -7,7 +7,10 @@
     "quotemark": [true, "single", "jsx-double"],
     "interface-name": [true, "never-prefix"],
     "no-console": [false],
+    "curly": [true, "ignore-same-line"],
+    "object-literal-key-quotes": [false],
     "interface-over-type-literal": false,
+    "object-literal-sort-keys": false,
     "arrow-parens": false,
     "no-reference": false
   },

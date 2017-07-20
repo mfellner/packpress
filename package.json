@@ -16,11 +16,15 @@
     "@types/mz": "^0.0.31",
     "@types/react": "^15.0.38",
     "@types/react-dom": "^15.5.1",
+    "@types/webpack": "^3.0.4",
+    "awesome-typescript-loader": "^3.2.1",
     "mz": "^2.6.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "remark": "^7.0.1",
-    "remark-react": "^4.0.0"
+    "remark-react": "^4.0.0",
+    "source-map-loader": "^0.2.1",
+    "webpack": "^3.3.0"
   },
   "devDependencies": {
     "@types/node": "8.0.14",

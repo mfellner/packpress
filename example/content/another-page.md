@@ -2,6 +2,7 @@
 created: "2017-07-17"
 tags:
 - example
+- other
 ---
 # Another page
 
