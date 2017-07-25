@@ -2,11 +2,13 @@ import path = require('path');
 import webpack = require('webpack');
 import { Configuration, Stats } from 'webpack';
 
-export type Entry = { name: string; file: string; route: string; html: string };
+export type Entry = { name: string; file: string };
+export type PageEntry = Entry & { route: string; html: string };
 
 export type Options = {
   context: string;
   entries: Entry[];
+  pages: PageEntry[];
   outputPath: string;
 };
 
@@ -42,10 +44,14 @@ export default class WebpackService {
           { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
         ]
       },
+      resolve: {
+        extensions: ['.ts', '.tsx', '.js', '.json']
+      },
+      externals: { './FilesystemAdapter': 'undefined' },
       devtool: 'source-map'
     };
 
-    const entries = options.entries.reduce(
+    const entries = options.pages.reduce(
       (obj, { name, file }) => Object.assign(obj, { [name]: file }),
       {}
     );
@@ -78,6 +84,9 @@ export default class WebpackService {
           },
           { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
         ]
+      },
+      resolve: {
+        extensions: ['.ts', '.tsx', '.js', '.json']
       },
       externals: ['react', 'react-dom'],
       devtool: 'source-map'

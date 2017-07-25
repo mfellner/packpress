@@ -1,22 +1,23 @@
 /// <reference path="../typings/index.d.ts" />
 
-import fs = require('mz/fs');
-import path = require('path');
 import remark = require('remark');
 import remarkReact = require('remark-react');
 import { ReactElement } from 'react';
+import ContentAdapter from './ContentAdapter';
 import ContentProvider from './ContentProvider';
+import * as utils from './utils';
 
 export default class MarkdownContentProvider implements ContentProvider<ReactElement<any>> {
-  private readonly dir: string;
+  private readonly contentBase: string;
+  private contentAdapter: ContentAdapter;
 
-  constructor(args: { dir: string }) {
-    this.dir = args.dir;
+  constructor(args: { contentBase: string }) {
+    this.contentBase = args.contentBase;
   }
 
   public async resolveRoutes(route: string | RegExp): Promise<string[]> {
-    const files = await fs.readdir(this.dir);
-    const paths = files.map(f => `/${path.basename(f, path.extname(f))}`);
+    const files = await this.getContentFiles();
+    const paths = files.map(f => `/${utils.basename(f, utils.extname(f))}`);
     let filtered;
 
     if (route === '/') {
@@ -36,9 +37,29 @@ export default class MarkdownContentProvider implements ContentProvider<ReactEle
     return [];
   }
 
+  public async getContentFiles(): Promise<string[]> {
+    const adapter = await this.getContentAdapter();
+    return adapter.listFiles(this.contentBase, '**/*.md');
+  }
+
   public async getContent(query: string): Promise<ReactElement<any>> {
-    const b = await fs.readFile(path.join(this.dir, `${query}.md`));
+    const adapter = this.getContentAdapter();
+    const filename = utils.basename(query, utils.extname(query));
+    const b = await adapter.readFile(this.contentBase, `${filename}.md`);
     const result = await remark().use(remarkReact).process(b.toString());
     return result.contents;
+  }
+
+  private getContentAdapter(): ContentAdapter {
+    if (!this.contentAdapter) {
+      let m;
+      if (utils.isBrowser) {
+        m = require('./StaticHttpAdapter');
+      } else {
+        m = require('./FilesystemAdapter');
+      }
+      this.contentAdapter = new m.default();
+    }
+    return this.contentAdapter;
   }
 }

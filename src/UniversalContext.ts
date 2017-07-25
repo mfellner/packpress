@@ -1,7 +1,7 @@
 import ContentProvider from './ContentProvider';
 import Context from './Context';
 
-export default class ServerContext<T> implements Context<T> {
+export default class UniversalContext<T> implements Context<T> {
   public readonly pathname: string;
   private readonly provider: ContentProvider<T>;
 

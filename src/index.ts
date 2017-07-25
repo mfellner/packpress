@@ -5,7 +5,7 @@ import ReactDOMServer = require('react-dom/server');
 import Document from './Document';
 import MarkdownContentProvider from './MarkdownContentProvider';
 import PageType from './PageType';
-import ServerContext from './ServerContext';
+import UniversalContext from './UniversalContext';
 import WebpackService from './WebpackService';
 
 const root = path.resolve(__dirname, '../example');
@@ -50,16 +50,16 @@ async function main(): Promise<void> {
   const pageDir = path.join(root, 'pages');
   const pages = await loadPages(pageDir);
 
-  const provider = new MarkdownContentProvider({ dir: path.join(root, 'content') });
+  const provider = new MarkdownContentProvider({ contentBase: path.join(root, 'content') });
 
-  const entries = await Promise.all(
+  const pageEntries = await Promise.all(
     pages
       .map(async ({ file, page }) => {
         const routes = await provider.resolveRoutes(page.route);
 
         return Promise.all(
           routes.map(async route => {
-            const ctx = new ServerContext({ pathname: route, provider });
+            const ctx = new UniversalContext({ pathname: route, provider });
             const props = page.getInitialProps ? await page.getInitialProps(ctx) : null;
             return { file, route, element: React.createElement(page, props) };
           })
@@ -79,9 +79,12 @@ async function main(): Promise<void> {
 
   const outputPath = path.join(root, 'dist');
 
+  const additionalEntries = [] as any[];
+
   const webpackService = new WebpackService({
     context: pageDir,
-    entries,
+    entries: additionalEntries,
+    pages: pageEntries,
     outputPath
   });
 
@@ -92,7 +95,7 @@ async function main(): Promise<void> {
   console.log(stats.toString());
 
   await Promise.all(
-    entries.map(async entry => {
+    pageEntries.map(async entry => {
       const entrypoint = Object.entries(entrypoints).find(
         ([name]) => name.indexOf(entry.name) !== -1
       );
@@ -115,6 +118,24 @@ async function main(): Promise<void> {
       console.log('write', filePath);
       await fs.writeFile(filePath, html);
     })
+  );
+
+  const contentFiles = await provider.getContentFiles();
+  console.log('copy', contentFiles);
+  await Promise.all(
+    contentFiles.map(
+      f =>
+        new Promise((resolve, reject) =>
+          fs
+            .createReadStream(f)
+            .pipe(
+              fs
+                .createWriteStream(path.join(outputPath, path.basename(f)))
+                .on('finish', () => resolve())
+                .on('error', err => reject(err))
+            )
+        )
+    )
   );
 }
 
